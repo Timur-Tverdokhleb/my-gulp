@@ -6,6 +6,7 @@ let gulp = require('gulp'), // Ну это понятно
     rename = require('gulp-rename'), // Ренейминг файлов
     del = require('del'), // Удаление чего-либо
     autoprefixer = require('gulp-autoprefixer'); // Добавление префиксов
+    const htmlmin = require('gulp-htmlmin');
 
 
 
@@ -23,7 +24,8 @@ gulp.task('html', function(){
   .pipe(browserSync.reload({stream: true})) // Само подключение BrowserSync
 });
 
-gulp.task('js', function(){ // Функция подключения BrowserSync к JS файлам
+// Функция подключения BrowserSync к JS файлам
+gulp.task('js', function(){
   return gulp.src('app/js/*.js') // Хде эти файлы
   .pipe(browserSync.reload({stream: true})) // Само подключение BrowserSync
 });
@@ -32,6 +34,7 @@ gulp.task('js', function(){ // Функция подключения BrowserSync
 // Функция компилинга SCSS в CSS
 gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
+    .pipe(sass().on('error', sass.logError))
     .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла
     .pipe(autoprefixer({ // Автопрефиксер
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
@@ -54,7 +57,8 @@ gulp.task('css-concat', function(){
     .pipe(browserSync.reload({stream: true})) // Подключение BrowserSync
 });
 
-gulp.task('js-concat', function(){ // Функция конкатинации библиотек JS
+// Функция конкатинации библиотек JS
+gulp.task('js-concat', function(){
   return gulp.src([ // Откуда берем файлы для конкатинации
     'node_modules/slick-carousel/slick/slick.js'
   ])
@@ -73,6 +77,10 @@ gulp.task('clean', async function(){
 // Экспортирование проекта в папку dist
 gulp.task('export', async function(){
   let buildHtml = gulp.src('app/views/**/*.html') // Экспортирование HTML файлов
+    .pipe(htmlmin({ // Минификация HTML файлов
+      collapseWhitespace: true, // удаляем все переносы
+      removeComments: true // удаляем все комментарии
+    }))
     .pipe(gulp.dest('dist/views'));
 
   let BuildCss = gulp.src('app/css/**/*.css') // Экспортирование CSS файлов

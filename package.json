@@ -19,6 +19,8 @@
     "gulp-uglify": "^3.0.2"
   },
   "dependencies": {
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-sourcemaps": "^2.6.5",
     "normalize.css": "^8.0.1",
     "slick-carousel": "^1.8.1"
   }
