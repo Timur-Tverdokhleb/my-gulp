@@ -27,6 +27,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows
+#fonts
+
+
+# BRUH
 node_modules
 dist
+app/css
+app/css/style.min.css

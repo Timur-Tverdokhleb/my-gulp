@@ -7,8 +7,7 @@ let gulp = require('gulp'), // Ну это понятно
     del = require('del'), // Удаление чего-либо
     autoprefixer = require('gulp-autoprefixer'), // Добавление префиксов
     htmlmin = require('gulp-htmlmin'),
-    purgecss = require('gulp-purgecss'),
-    cleancss = require('gulp-clean-css');
+    purgecss = require('gulp-purgecss');
 
 
 
@@ -39,11 +38,9 @@ gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
     .pipe(sass().on('error', sass.logError))
     .pipe(purgecss({
-      content: ['app/views/**/*.html'],
-      rejected: true
+      content: ['app/views/**/*.html']
     }))
-    .pipe (cleanсss({ level: 2 }))
-    .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла
+    .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла//
     .pipe(autoprefixer({ // Автопрефиксер
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
       cascade: false
@@ -92,6 +89,8 @@ gulp.task('export', async function(){
     .pipe(gulp.dest('dist/views'));
 
   let BuildCss = gulp.src('app/css/**/*.css') // Экспортирование CSS файлов
+    
+    .pipe(gulp.dest('dist/css'))
     .pipe(gulp.dest('dist/css'));
 
   let BuildJs = gulp.src('app/js/**/*.js') // Экспортирование JS файлов
@@ -114,7 +113,7 @@ gulp.task('watch', function(){
 
 
 // Запуск рабочего процесса GULP командой "gulp". Выполняются все указанные функции, и проект робит)
-gulp.task('default', gulp.parallel('css-concat' ,'sass', 'js-concat', 'browser-sync', 'watch'));
+gulp.task('default', gulp.parallel('sass', 'css-concat', 'js-concat', 'browser-sync', 'watch'));
 
 // Функция билдинга проекта в папку dist
 gulp.task('build', gulp.series('clean', 'export'))
