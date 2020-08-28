@@ -38,7 +38,8 @@ gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
     .pipe(sass().on('error', sass.logError))
     .pipe(purgecss({
-      content: ['app/views/**/*.html']
+      content: ['app/views/**/*.html'],
+      whitelistPatterns: [ /slick-.*$/ ]
     }))
     .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла//
     .pipe(autoprefixer({ // Автопрефиксер
