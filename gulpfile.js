@@ -7,7 +7,7 @@ let gulp = require('gulp'), // Ну это понятно
     del = require('del'), // Удаление чего-либо
     autoprefixer = require('gulp-autoprefixer'), // Добавление префиксов
     htmlmin = require('gulp-htmlmin'),
-    purgecss = require('gulp-purgecss');
+    purgecss = require('gulp-purgecss'),
     cleancss = require('gulp-clean-css');
 
 
