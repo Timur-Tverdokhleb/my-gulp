@@ -5,8 +5,10 @@ let gulp = require('gulp'), // Ну это понятно
     concat = require('gulp-concat'), // Конкатинация
     rename = require('gulp-rename'), // Ренейминг файлов
     del = require('del'), // Удаление чего-либо
-    autoprefixer = require('gulp-autoprefixer'); // Добавление префиксов
-    const htmlmin = require('gulp-htmlmin');
+    autoprefixer = require('gulp-autoprefixer'), // Добавление префиксов
+    htmlmin = require('gulp-htmlmin'),
+    purgecss = require('gulp-purgecss'),
+    cleancss = require('gulp-clean-css');
 
 
 
@@ -14,7 +16,8 @@ gulp.task('browser-sync', function() { // Функция подключения 
   browserSync.init({ // Я хуй знает, что это, но, по-моему, настройки этого дерьма
       server: {
           baseDir: ["app/", "app/views"] // Директория работы этой хуйни
-      }
+      },
+      notify: false
   });
 });
 
@@ -35,6 +38,11 @@ gulp.task('js', function(){
 gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
     .pipe(sass().on('error', sass.logError))
+    .pipe(purgecss({
+      content: ['app/views/**/*.html'],
+      rejected: true
+    }))
+    .pipe (cleanсss({ level: 2 }))
     .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла
     .pipe(autoprefixer({ // Автопрефиксер
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
