@@ -37,7 +37,7 @@ gulp.task('js', function(){
 gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
     .pipe(sass().on('error', sass.logError))
-    .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла//
+    
     .pipe(autoprefixer({ // Автопрефиксер
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
       cascade: false
@@ -75,11 +75,12 @@ gulp.task('export', async function(){
     .pipe(gulp.dest('dist/views'));
 
   let BuildCss = gulp.src('app/css/**/*.css') // Экспортирование CSS файлов
-    .pipe(purgecss({
-      content: ['app/views/**/*.html'],
-      whitelistPatterns: [ /slick-.*$/ ]
+    .pipe(purgecss({ // Функция purgecss, который убирает неиспользующиеся CSS стили
+      content: ['app/views/**/*.html'], // HTML файл, откуда ему смотреть классы
+      whitelistPatterns: [ /slick-.*$/ ] // Игнорирование либы Slick-slider
     }))
-    .pipe(gulp.dest('dist/css'));
+    .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла
+    .pipe(gulp.dest('dist/css')); // Куда
 
   let BuildJs = gulp.src('app/js/**/*.js') // Экспортирование JS файлов
     .pipe(gulp.dest('dist/js'));

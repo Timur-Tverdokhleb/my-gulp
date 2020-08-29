@@ -27,11 +27,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-#fonts
-
-
 # BRUH
 node_modules
 dist
 app/css
-app/css/style.min.css
