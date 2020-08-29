@@ -33,14 +33,10 @@ gulp.task('js', function(){
 });
 
 
-// Функция компилинга SCSS в CSS
+// Функция компиляции SCSS в CSS
 gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
     .pipe(sass().on('error', sass.logError))
-    .pipe(purgecss({
-      content: ['app/views/**/*.html'],
-      whitelistPatterns: [ /slick-.*$/ ]
-    }))
     .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла//
     .pipe(autoprefixer({ // Автопрефиксер
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
@@ -51,17 +47,6 @@ gulp.task('sass', function(){
     .pipe(browserSync.reload({stream: true})) // Подключение BrowserSync для CSS
 });
 
-
-// Функция конкатинации библиотек CSS
-gulp.task('css-concat', function(){
-  return gulp.src([ // Откуда берем файлы для конкатинации
-    'node_modules/normalize.css/normalize.css',
-    'node_modules/slick-carousel/slick/slick.css'
-  ])
-    .pipe(concat('_libs.scss')) // В какой файл складываем сконкатинированные библиотеки
-    .pipe(gulp.dest('app/scss')) // Куды этот файл суем
-    .pipe(browserSync.reload({stream: true})) // Подключение BrowserSync
-});
 
 // Функция конкатинации библиотек JS
 gulp.task('js-concat', function(){
@@ -90,8 +75,10 @@ gulp.task('export', async function(){
     .pipe(gulp.dest('dist/views'));
 
   let BuildCss = gulp.src('app/css/**/*.css') // Экспортирование CSS файлов
-    
-    .pipe(gulp.dest('dist/css'))
+    .pipe(purgecss({
+      content: ['app/views/**/*.html'],
+      whitelistPatterns: [ /slick-.*$/ ]
+    }))
     .pipe(gulp.dest('dist/css'));
 
   let BuildJs = gulp.src('app/js/**/*.js') // Экспортирование JS файлов
