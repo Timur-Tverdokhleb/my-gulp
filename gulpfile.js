@@ -101,7 +101,7 @@ gulp.task('watch', function(){
 
 
 // Запуск рабочего процесса GULP командой "gulp". Выполняются все указанные функции, и проект робит)
-gulp.task('default', gulp.parallel('sass', 'css-concat', 'js-concat', 'browser-sync', 'watch'));
+gulp.task('default', gulp.parallel('sass', 'js-concat', 'browser-sync', 'watch'));
 
 // Функция билдинга проекта в папку dist
 gulp.task('build', gulp.series('clean', 'export'))
