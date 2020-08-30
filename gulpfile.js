@@ -1,13 +1,13 @@
 let gulp = require('gulp'), // Ну это понятно
-    sass = require('gulp-sass'), // Это SASS
     browserSync = require('browser-sync'), // BrowserSync
-    uglify = require('gulp-uglify'), // Минификация JS
-    concat = require('gulp-concat'), // Конкатинация
-    rename = require('gulp-rename'), // Ренейминг файлов
-    del = require('del'), // Удаление чего-либо
+    sass = require('gulp-sass'), // Это SASS
     autoprefixer = require('gulp-autoprefixer'), // Добавление префиксов
-    htmlmin = require('gulp-htmlmin'),
-    purgecss = require('gulp-purgecss');
+    rename = require('gulp-rename'), // Ренейминг (переименование) файлов
+    uglify = require('gulp-uglify'), // Минификация JS файлов
+    concat = require('gulp-concat'), // Конкатинация файлов
+    del = require('del'), // Удаление чего-либо
+    htmlmin = require('gulp-htmlmin'), // Минификация HTML файлов
+    purgecss = require('gulp-purgecss'); // Удаление не использущихся стилей
 
 
 
@@ -19,17 +19,19 @@ gulp.task('browser-sync', function() { // Функция подключения 
       notify: false
   });
 });
-
 // Функция подключения BrowserSync к HTML файлам
 gulp.task('html', function(){
   return gulp.src('app/views/**/*.html') // Хде эти файлы
-  .pipe(browserSync.reload({stream: true})) // Само подключение BrowserSync
+  .pipe(browserSync.reload({ // Само подключение BrowserSync
+    stream: true
+  }))
 });
-
 // Функция подключения BrowserSync к JS файлам
 gulp.task('js', function(){
   return gulp.src('app/js/*.js') // Хде эти файлы
-  .pipe(browserSync.reload({stream: true})) // Само подключение BrowserSync
+  .pipe(browserSync.reload({ // Подключение BrowserSync
+    stream: true
+  }))
 });
 
 
@@ -37,15 +39,19 @@ gulp.task('js', function(){
 gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Откуда брать SCSS
     .pipe(sass().on('error', sass.logError))
-    
     .pipe(autoprefixer({ // Автопрефиксер
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
       cascade: false
     }))
-    .pipe(rename({suffix: '.min'})) // Добавление суффикса ".min" для сжатого CSS файла
+    .pipe(rename({
+      suffix: '.min' // Добавление суффикса ".min" для сжатого CSS файла
+    }))
     .pipe(gulp.dest('app/css')) // Куда суем скомпилированные файлы
-    .pipe(browserSync.reload({stream: true})) // Подключение BrowserSync для CSS
+    .pipe(browserSync.reload({ // Подключение BrowserSync для CSS
+      stream: true
+    }))
 });
+// Тут будет функция компиляции PUG файлов
 
 
 // Функция конкатинации библиотек JS
@@ -54,23 +60,24 @@ gulp.task('js-concat', function(){
     'node_modules/slick-carousel/slick/slick.js'
   ])
     .pipe(concat('libs.min.js')) // В какой файл складываем сконкатинированные библиотеки
-    .pipe(uglify())
+    .pipe(uglify()) // Минификация
     .pipe(gulp.dest('app/js')) // Куды этот файл суем
-    .pipe(browserSync.reload({stream: true})) // Подключение BrowserSync
+    .pipe(browserSync.reload({
+      stream: true // Подключение BrowserSync
+    }))
 });
 
 
 // Функция удаления папки dist
-gulp.task('clean', async function(){
+gulp.task('del', async function(){
   del.sync('dist')
 })
-
 // Экспортирование проекта в папку dist
 gulp.task('export', async function(){
   let buildHtml = gulp.src('app/views/**/*.html') // Экспортирование HTML файлов
     .pipe(htmlmin({ // Минификация HTML файлов
-      collapseWhitespace: true, // удаляем все переносы
-      removeComments: true // удаляем все комментарии
+      collapseWhitespace: true, // Удаляем все переносы
+      removeComments: true // Удаляем все комментарии
     }))
     .pipe(gulp.dest('dist/views'));
 
@@ -79,7 +86,9 @@ gulp.task('export', async function(){
       content: ['app/views/**/*.html'], // HTML файл, откуда ему смотреть классы
       whitelistPatterns: [ /slick-.*$/ ] // Игнорирование либы Slick-slider
     }))
-    .pipe(sass({outputStyle: 'compressed'})) // Сжатие CSS файла
+    .pipe(sass({
+      outputStyle: 'compressed' // Сжатие CSS файла
+    }))
     .pipe(gulp.dest('dist/css')); // Куда
 
   let BuildJs = gulp.src('app/js/**/*.js') // Экспортирование JS файлов
@@ -105,4 +114,9 @@ gulp.task('watch', function(){
 gulp.task('default', gulp.parallel('sass', 'js-concat', 'browser-sync', 'watch'));
 
 // Функция билдинга проекта в папку dist
-gulp.task('build', gulp.series('clean', 'export'))
+gulp.task('build', gulp.series('del', 'export'))
+
+// Чистка всего, кроме папки dist (подготовка сайта для портфолио)
+gulp.task('fin', function(){
+  del.sync['app', 'node_modules', '.gitignore', 'package', 'README', 'yarn.lock', 'gulpfile']
+})
