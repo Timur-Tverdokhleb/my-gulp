@@ -115,8 +115,3 @@ gulp.task('default', gulp.parallel('sass', 'js-concat', 'browser-sync', 'watch')
 
 // Функция билдинга проекта в папку dist
 gulp.task('build', gulp.series('del', 'export'))
-
-// Чистка всего, кроме папки dist (подготовка сайта для портфолио)
-gulp.task('fin', async function(){
-  del.sync(['app', 'node_modules', '.gitignore', 'package', 'README', 'yarn.lock', 'gulpfile'])
-})
