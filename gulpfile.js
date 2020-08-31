@@ -43,8 +43,9 @@ gulp.task('sass', function(){
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
       cascade: false
     }))
-    .pipe(rename({
-      suffix: '.min' // Добавление суффикса ".min" для сжатого CSS файла
+    .pipe(purgecss({ // Функция purgecss, который убирает неиспользующиеся CSS стили
+      content: ['app/views/**/*.html'], // HTML файл, откуда ему смотреть классы
+      whitelistPatterns: [ /slick-.*$/ ] // Игнорирование либы Slick-slider
     }))
     .pipe(gulp.dest('app/css')) // Куда суем скомпилированные файлы
     .pipe(browserSync.reload({ // Подключение BrowserSync для CSS
@@ -82,12 +83,11 @@ gulp.task('export', async function(){
     .pipe(gulp.dest('dist/views'));
 
   let BuildCss = gulp.src('app/css/**/*.css') // Экспортирование CSS файлов
-    .pipe(purgecss({ // Функция purgecss, который убирает неиспользующиеся CSS стили
-      content: ['app/views/**/*.html'], // HTML файл, откуда ему смотреть классы
-      whitelistPatterns: [ /slick-.*$/ ] // Игнорирование либы Slick-slider
-    }))
     .pipe(sass({
       outputStyle: 'compressed' // Сжатие CSS файла
+    }))
+    .pipe(rename({
+      suffix: '.min' // Добавление суффикса ".min" для сжатого CSS файла
     }))
     .pipe(gulp.dest('dist/css')); // Куда
 
@@ -117,6 +117,6 @@ gulp.task('default', gulp.parallel('sass', 'js-concat', 'browser-sync', 'watch')
 gulp.task('build', gulp.series('del', 'export'))
 
 // Чистка всего, кроме папки dist (подготовка сайта для портфолио)
-gulp.task('fin', function(){
-  del.sync['app', 'node_modules', '.gitignore', 'package', 'README', 'yarn.lock', 'gulpfile']
+gulp.task('fin', async function(){
+  del.sync(['app', 'node_modules', '.gitignore', 'package', 'README', 'yarn.lock', 'gulpfile'])
 })
