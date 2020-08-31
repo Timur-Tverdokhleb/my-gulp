@@ -7,7 +7,8 @@ let gulp = require('gulp'), // Ну это понятно
     concat = require('gulp-concat'), // Конкатинация файлов
     del = require('del'), // Удаление чего-либо
     htmlmin = require('gulp-htmlmin'), // Минификация HTML файлов
-    purgecss = require('gulp-purgecss'); // Удаление не использущихся стилей
+    purgecss = require('gulp-purgecss'), // Удаление не использущихся стилей
+    cleanCSS = require('gulp-clean-css');
 
 
 
@@ -43,8 +44,9 @@ gulp.task('sass', function(){
       overrideBrowserslist: ['last 15 versions', '> 1%', 'ie 8', 'ie 7'],
       cascade: false
     }))
-    .pipe(rename({
-      suffix: '.min' // Добавление суффикса ".min" для сжатого CSS файла
+    .pipe(purgecss({ // Функция purgecss, который убирает неиспользующиеся CSS стили
+      content: ['app/views/**/*.html'], // HTML файл, откуда ему смотреть классы
+      whitelistPatterns: [ /slick-.*$/ ] // Игнорирование либы Slick-slider
     }))
     .pipe(gulp.dest('app/css')) // Куда суем скомпилированные файлы
     .pipe(browserSync.reload({ // Подключение BrowserSync для CSS
@@ -82,12 +84,13 @@ gulp.task('export', async function(){
     .pipe(gulp.dest('dist/views'));
 
   let BuildCss = gulp.src('app/css/**/*.css') // Экспортирование CSS файлов
-    .pipe(purgecss({ // Функция purgecss, который убирает неиспользующиеся CSS стили
-      content: ['app/views/**/*.html'], // HTML файл, откуда ему смотреть классы
-      whitelistPatterns: [ /slick-.*$/ ] // Игнорирование либы Slick-slider
-    }))
-    .pipe(sass({
-      outputStyle: 'compressed' // Сжатие CSS файла
+    
+    // .pipe(sass({
+    //   outputStyle: 'compressed' // Сжатие CSS файла
+    // }))
+    .pipe(cleanCSS())
+    .pipe(rename({
+      suffix: '.min' // Добавление суффикса ".min" для сжатого CSS файла
     }))
     .pipe(gulp.dest('dist/css')); // Куда
 
